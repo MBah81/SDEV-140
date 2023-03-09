@@ -1,87 +1,55 @@
 import tkinter as tk
 from tkinter import messagebox
 
-class Application:
+class SchedulingApp:
+
     def __init__(self, master):
         self.master = master
-        self.master.title("Scheduling Application")
+        self.master.title("Scheduling App")
 
-        # Create main window
-        self.main_frame = tk.Frame(self.master, padx=10, pady=10)
-        self.main_frame.pack()
+        # create the labels
+        tk.Label(master, text="Task Name:").grid(row=0, sticky=tk.W)
+        tk.Label(master, text="Task Date:").grid(row=1, sticky=tk.W)
+        tk.Label(master, text="Task Time:").grid(row=2, sticky=tk.W)
 
-        # Create label
-        self.label = tk.Label(self.main_frame, text="Welcome to Scheduling Application!")
-        self.label.pack(pady=10)
+        # create the entry boxes
+        self.task_name_entry = tk.Entry(master)
+        self.task_name_entry.grid(row=0, column=1)
+        self.task_date_entry = tk.Entry(master)
+        self.task_date_entry.grid(row=1, column=1)
+        self.task_time_entry = tk.Entry(master)
+        self.task_time_entry.grid(row=2, column=1)
 
-        # Create buttons
-        self.create_button = tk.Button(self.main_frame, text="Create Schedule", command=self.create_schedule)
-        self.create_button.pack(pady=5)
+        # create the buttons
+        tk.Button(master, text="Add Task", command=self.add_task).grid(row=3, column=0)
+        tk.Button(master, text="View Tasks", command=self.view_tasks).grid(row=3, column=1)
+        tk.Button(master, text="Exit", command=self.exit_app).grid(row=3, column=2)
 
-        self.view_button = tk.Button(self.main_frame, text="View Schedule", command=self.view_schedule)
-        self.view_button.pack(pady=5)
+    # callback functions for the buttons
+    def add_task(self):
+        task_name = self.task_name_entry.get()
+        task_date = self.task_date_entry.get()
+        task_time = self.task_time_entry.get()
 
-        self.exit_button = tk.Button(self.main_frame, text="Exit", command=self.master.destroy)
-        self.exit_button.pack(pady=5)
+        if not all([task_name, task_date, task_time]):
+            messagebox.showerror("Error", "All fields are required")
+        else:
+            try:
+                task_datetime = datetime.datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M")
+                messagebox.showinfo("Success", f"Task '{task_name}' added for {task_datetime}")
+            except ValueError:
+                messagebox.showerror("Error", "Invalid date or time format")
 
-    def create_schedule(self):
-        # Create secondary window
-        self.create_frame = tk.Toplevel(self.master)
-        self.create_frame.title("Create Schedule")
+    def view_tasks(self):
+        messagebox.showinfo("View Tasks", "Not implemented yet")
 
-        # Create label
-        self.create_label = tk.Label(self.create_frame, text="Enter Schedule Details:")
-        self.create_label.pack(pady=10)
+    def exit_app(self):
+        if messagebox.askokcancel("Exit", "Are you sure you want to exit?"):
+            self.master.destroy()
 
-        # Create entry boxes
-        self.title_label = tk.Label(self.create_frame, text="Title:")
-        self.title_label.pack()
-        self.title_entry = tk.Entry(self.create_frame)
-        self.title_entry.pack()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SchedulingApp(root)
+    root.mainloop()
 
-        self.date_label = tk.Label(self.create_frame, text="Date:")
-        self.date_label.pack()
-        self.date_entry = tk.Entry(self.create_frame)
-        self.date_entry.pack()
-
-        self.time_label = tk.Label(self.create_frame, text="Time:")
-        self.time_label.pack()
-        self.time_entry = tk.Entry(self.create_frame)
-        self.time_entry.pack()
-
-        # Create button
-        self.save_button = tk.Button(self.create_frame, text="Save", command=self.save_schedule)
-        self.save_button.pack(pady=5)
-
-    def view_schedule(self):
-        # Create secondary window
-        self.view_frame = tk.Toplevel(self.master)
-        self.view_frame.title("View Schedule")
-
-        # Create label
-        self.view_label = tk.Label(self.view_frame, text="Your Schedule:")
-        self.view_label.pack(pady=10)
-
-        # Create text box
-        self.schedule_text = tk.Text(self.view_frame, width=50, height=10)
-        self.schedule_text.pack()
-
-    def save_schedule(self):
-        # Get input values
-        title = self.title_entry.get()
-        date = self.date_entry.get()
-        time = self.time_entry.get()
-
-        # Validate input values
-        if not title or not date or not time:
-            messagebox.showerror("Error", "Please fill in all fields.")
-            return
-
-        # Save schedule
-        schedule = f"{title}\t{date}\t{time}\n"
-        with open("schedule.txt", "a") as f:
-            f.write(schedule)
-
-        # Clear input values
-        self.title_entry.delete(0, tk
 
